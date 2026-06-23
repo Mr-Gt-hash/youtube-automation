@@ -1,0 +1,39 @@
+# YouTube Automation Pipeline — Python Dependencies
+
+# Core
+python-dotenv>=1.0.0
+
+# AI / LLM
+openai>=1.30.0
+
+# Google APIs
+google-api-python-client>=2.130.0
+google-auth>=2.29.0
+google-auth-httplib2>=0.2.0
+google-auth-oauthlib>=1.2.0
+
+# Trend Research
+pytrends>=4.9.2
+
+# Voiceover
+elevenlabs>=1.2.0
+gTTS>=2.5.1
+pydub>=0.25.1
+
+# Video editing
+moviepy>=1.0.3
+imageio>=2.34.0
+imageio-ffmpeg>=0.5.1
+
+# Thumbnail
+Pillow>=10.3.0
+
+# Scheduling
+APScheduler>=3.10.4
+
+# HTTP / Utilities
+requests>=2.31.0
+
+# Testing
+pytest>=8.2.0
+pytest-mock>=3.14.0

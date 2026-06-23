@@ -1,0 +1,54 @@
+name: Daily YouTube Pipeline
+
+on:
+  schedule:
+    - cron: '0 9 * * *'   # Every day at 09:00 UTC
+  workflow_dispatch:        # Allow manual trigger from GitHub UI
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          TARGET_NICHE: ${{ vars.TARGET_NICHE || 'technology' }}
+          VIDEOS_PER_DAY: '1'
+          UPLOAD_TIME: '17:00'
+          VIDEO_LANGUAGE: 'en'
+          MAX_VIDEO_DURATION: '600'
+        run: python main.py
+
+      - name: Upload logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-logs-${{ github.run_number }}
+          path: logs/
+          retention-days: 14
